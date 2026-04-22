@@ -1,0 +1,10 @@
+/models/
+/data/
+/VGG-16/models-欠拟合/
+/.venv/
+/AlexNet/models/
+/GoogLeNetCatDot/models/
+/GoogLeNetCatDot/detect/
+/GoogLeNetCatDot/data_cat_dog/
+/LeNet/models/
+/VGG-16/models/
