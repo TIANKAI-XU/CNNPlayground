@@ -1,12 +1,13 @@
 # CNNPlayground
 
-一个基于 PyTorch 的 CNN 学习与实验仓库，用于复现和对比经典卷积神经网络，并扩展到简单的图像二分类任务。
+一个基于 PyTorch 的 CNN 学习与实验仓库，用于复现经典卷积神经网络，并扩展到若干图像分类任务。
 
-当前代码主要覆盖三类实验：
+当前代码覆盖四类实验：
 
 - `FashionMNIST`：LeNet、AlexNet、GoogLeNet、VGG-16、ResNet18
 - 猫狗二分类：GoogLeNetCatDot
 - 口罩检测二分类：ResNet18MaskDetection
+- 水稻品种五分类：ResNet18RiceDetection
 
 ## 项目结构
 
@@ -20,22 +21,20 @@ CNNPlayground/
 ├── ResNet18/                     # FashionMNIST: ResNet18
 ├── GoogLeNetCatDot/              # Cat vs Dog: GoogLeNet 二分类
 ├── ResNet18MaskDetection/        # Mask Detection: ResNet18 二分类
+├── ResNet18RiceDetection/        # Rice Detection: ResNet18 五分类
 ├── requirements.txt
 └── LICENSE
 ```
 
-大多数模型目录都包含：
+常见脚本职责：
 
-- `model.py`：网络结构
-- `train.py`：训练、验证并保存最优权重
+- `model.py`：网络结构定义
+- `train.py`：训练、验证并保存验证集最优权重
 - `test.py`：加载 `models/best_model.pth` 后计算测试准确率
-- `detect.py`：加载模型做单样本或逐样本推理
-- `plot.py`：可视化一个 batch（当前多数脚本用于查看 `FashionMNIST` 样例）
-
-图像二分类目录还包含：
-
-- `data_partitioning.py`：将原始图片划分为 `train/` 和 `test/`
-- `mean_std.py`：统计图片数据集的通道均值和方差
+- `detect.py`：加载模型做单张图片或逐样本推理
+- `plot.py`：可视化一个 batch，当前多数脚本用于查看 `FashionMNIST` 样例
+- `data_partitioning.py`：将自定义图片数据集划分为 `train/` 和 `test/`
+- `mean_std.py`：统计自定义图片数据集的通道均值和方差
 
 ## 环境要求
 
@@ -113,6 +112,35 @@ python mean_std.py
 cd ..
 ```
 
+### Rice Detection
+
+`ResNet18RiceDetection` 默认训练数据路径是：
+
+```text
+ResNet18RiceDetection/data/
+├── train/
+│   ├── Arborio/
+│   ├── Basmati/
+│   ├── Ipsala/
+│   ├── Jasmine/
+│   └── Karacadag/
+└── test/
+    ├── Arborio/
+    ├── Basmati/
+    ├── Ipsala/
+    ├── Jasmine/
+    └── Karacadag/
+```
+
+如果使用自带划分脚本，请先把原始图片放到 `ResNet18RiceDetection/dataset/`，然后从该目录内执行：
+
+```bash
+cd ResNet18RiceDetection
+python data_partitioning.py
+python mean_std.py
+cd ..
+```
+
 ## 快速开始
 
 以下命令默认从仓库根目录执行。
@@ -173,6 +201,26 @@ python ResNet18MaskDetection/detect.py
 - 分类类别为 `mask` 和 `no_mask`
 - `detect.py` 默认读取 `ResNet18MaskDetection/data/test/mask/mask3.jpg`
 
+### Rice Detection
+
+```bash
+cd ResNet18RiceDetection
+python data_partitioning.py
+python mean_std.py
+cd ..
+
+python ResNet18RiceDetection/train.py
+python ResNet18RiceDetection/test.py
+```
+
+说明：
+
+- 模型输入为 RGB 三通道图片
+- 图片会被 resize 到 `224 x 224`
+- 默认训练轮数为 `20`
+- 默认学习率为 `3e-5`
+- 分类类别为 `Arborio`、`Basmati`、`Ipsala`、`Jasmine`、`Karacadag`
+
 ## 训练输出
 
 训练完成后，各模型目录通常会生成：
@@ -197,5 +245,7 @@ models/
 - `requirements.txt` 只包含部分辅助依赖，首次运行请按上面的安装命令补齐依赖。
 - 各模型脚本目前以学习和实验为主，参数主要写在代码中，还没有统一命令行配置。
 - 自定义图像数据集需要先按目录结构准备图片，否则 `ImageFolder` 会找不到类别目录。
+- `ResNet18MaskDetection` 和 `ResNet18RiceDetection` 的 `data_partitioning.py`、`mean_std.py` 使用相对路径 `dataset`，需要在对应目录内运行。
 - 训练脚本会覆盖对应目录下的 `models/best_model.pth`，保存的是验证集准确率最高的一版权重。
 - `AlexNet/train.py` 当前训练 resize 为 `224 x 224`，测试和推理 resize 为 `227 x 227`；如果训练时报全连接层输入维度不匹配，先将训练 resize 调整为 `227 x 227`。
+- `ResNet18RiceDetection/detect.py` 当前仍沿用了口罩检测的默认图片路径和类别名，建议先使用 `test.py` 验证水稻模型；如需单图推理，需要把 `detect.py` 中的图片路径和 `class_names` 改为水稻数据集对应内容。
