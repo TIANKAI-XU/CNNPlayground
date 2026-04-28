@@ -4,7 +4,7 @@ import time
 
 import torch
 from sympy.core.random import shuffle
-from torchvision.datasets import FashionMNIST
+from torchvision.datasets import FashionMNIST, ImageFolder
 from torchvision import transforms
 import torch.utils.data as data
 import numpy as np
@@ -17,25 +17,34 @@ except ImportError:
     tqdm = None
 
 try:
-    from ResNet18.model import ResNet18
+    from ResNet18MaskDetection.model import ResNet18MaskDetection
 except ModuleNotFoundError:
-    from model import ResNet18
+    from model import ResNet18MaskDetection
 import pandas as pd
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(PROJECT_ROOT, 'data')
+DATA_DIR = os.path.join(PROJECT_ROOT, 'ResNet18MaskDetection/data')
+TRAIN_DIR = os.path.join(DATA_DIR, 'train')
+TEST_DIR = os.path.join(DATA_DIR, 'test')
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
 PLOT_PATH = os.path.join(MODEL_DIR, 'training_curve.png')
 
 
 def train_val_data_process():
-    train_dataset = FashionMNIST(root=DATA_DIR,
-                                 train=True,
-                                 transform=transforms.Compose([
-                                     transforms.Resize(size=(227, 227)),
-                                     transforms.ToTensor()
-                                 ]),
-                                 download=True)
+    normalize = transforms.Normalize(
+        mean=[0.17263502, 0.15147281, 0.14267276],
+        std=[0.07360361, 0.06215812, 0.05929757]
+    )
+
+    # 定义数据集处理方法变量
+    train_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        normalize
+    ])
+    # 加载数据集 (会自动根据文件夹的名字分配标签)
+    train_dataset = ImageFolder(root=TRAIN_DIR, transform=train_transform)
+
     generator = torch.Generator().manual_seed(42)
     train_data, val_data = data.random_split(
         train_dataset,
@@ -47,11 +56,11 @@ def train_val_data_process():
     train_loader = data.DataLoader(train_data,
                                    batch_size=128,
                                    shuffle=True,
-                                   num_workers=2)
+                                   num_workers=4)
     val_loader = data.DataLoader(dataset=val_data,
                                  batch_size=128,
                                  shuffle=True,
-                                 num_workers=2)
+                                 num_workers=4)
     return train_loader, val_loader
 
 
@@ -238,7 +247,7 @@ def matplot_accuracy_loss(train_process):
 
 
 if __name__ == '__main__':
-    restnet18 = ResNet18()
+    model = ResNet18MaskDetection()
     train_loader, val_loader = train_val_data_process()
-    train_process = train_model_process(restnet18, train_loader, val_loader, num_epochs=20)
+    train_process = train_model_process(model, train_loader, val_loader, num_epochs=20)
     matplot_accuracy_loss(train_process)

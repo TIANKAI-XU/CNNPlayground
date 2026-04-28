@@ -9,3 +9,6 @@
 /LeNet/models/
 /VGG-16/models/
 /ResNet18/models/
+/ResNet18MaskDetection/models/
+/ResNet18MaskDetection/dataset/
+/ResNet18MaskDetection/data/
