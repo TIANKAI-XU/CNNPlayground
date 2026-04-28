@@ -45,12 +45,10 @@ CNNPlayground/
 安装依赖：
 
 ```bash
-pip install torch torchvision
 pip install -r requirements.txt
-pip install sympy tqdm pillow
 ```
 
-如果使用 CUDA，建议按 PyTorch 官方安装命令安装与你显卡驱动匹配的 `torch` 和 `torchvision`。
+如果使用 CUDA，建议优先按 PyTorch 官方安装命令安装与你显卡驱动匹配的 `torch` 和 `torchvision`，再安装其余依赖。
 
 ## 数据准备
 
@@ -242,10 +240,9 @@ models/
 
 ## 当前注意事项
 
-- `requirements.txt` 只包含部分辅助依赖，首次运行请按上面的安装命令补齐依赖。
 - 各模型脚本目前以学习和实验为主，参数主要写在代码中，还没有统一命令行配置。
 - 自定义图像数据集需要先按目录结构准备图片，否则 `ImageFolder` 会找不到类别目录。
 - `ResNet18MaskDetection` 和 `ResNet18RiceDetection` 的 `data_partitioning.py`、`mean_std.py` 使用相对路径 `dataset`，需要在对应目录内运行。
-- 训练脚本会覆盖对应目录下的 `models/best_model.pth`，保存的是验证集准确率最高的一版权重。
+- 训练脚本会覆盖对应目录下的 `models/best_model.pth`，保存的是验证集准确率最高的一版权重；模型权重、数据集和训练曲线默认作为本地实验产物被 `.gitignore` 排除。
 - `AlexNet/train.py` 当前训练 resize 为 `224 x 224`，测试和推理 resize 为 `227 x 227`；如果训练时报全连接层输入维度不匹配，先将训练 resize 调整为 `227 x 227`。
 - `ResNet18RiceDetection/detect.py` 当前仍沿用了口罩检测的默认图片路径和类别名，建议先使用 `test.py` 验证水稻模型；如需单图推理，需要把 `detect.py` 中的图片路径和 `class_names` 改为水稻数据集对应内容。

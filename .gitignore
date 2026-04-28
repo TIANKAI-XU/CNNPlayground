@@ -1,17 +1,40 @@
-/models/
-/data/
-/VGG-16/models-欠拟合/
-/.venv/
-/AlexNet/models/
-/GoogLeNetCatDot/models/
-/GoogLeNetCatDot/detect/
-/GoogLeNetCatDot/data_cat_dog/
-/LeNet/models/
-/VGG-16/models/
-/ResNet18/models/
-/ResNet18MaskDetection/models/
-/ResNet18MaskDetection/dataset/
-/ResNet18MaskDetection/data/
-/ResNet18RiceDetection/models/
-/ResNet18RiceDetection/dataset/
-/ResNet18RiceDetection/data/
+# Python cache and tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local editor and assistant state
+.idea/
+.vscode/
+.codex
+
+# Project datasets and generated model artifacts
+data/
+**/data/
+**/dataset/
+**/models/
+**/models-*/
+**/logs/
+
+# Legacy or ad-hoc local inputs
+GoogLeNetCatDot/data_cat_dog/
+GoogLeNetCatDot/detect/
+
+# Model checkpoints and generated outputs
+*.pth
+*.pt
+*.onnx
+training_curve*.png
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
