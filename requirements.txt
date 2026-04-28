@@ -1,4 +1,9 @@
+torch
+torchvision
 numpy
 matplotlib
 pandas
 torchsummary
+sympy
+tqdm
+pillow
